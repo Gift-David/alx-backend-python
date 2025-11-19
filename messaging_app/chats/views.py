@@ -9,13 +9,15 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     
 class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all()
+    queryset = Message.objects.filter()
     serializer_class = MessageSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends  = [MessageFilter]
+    permission_classes = ["IsAuthenticated", "HTTP_403_FORBIDDEN"]
     
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
     
 
+# "conversation_id"

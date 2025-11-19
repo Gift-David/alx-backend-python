@@ -76,7 +76,9 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 20
 }   
 
 # Database
