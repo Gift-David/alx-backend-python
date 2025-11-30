@@ -8,8 +8,4 @@ def trigger_notification_upon_new_message(instance, sender, created, **kwargs):
         return
     
     if created:
-        # sender = instance.sender
-        # message = instance.content
-        # notification = f"New message from {sender}. {message}"
-
-        Notification.save(user=instance.sender, message=instance)
+        Notification.objects.create(user=instance.sender, message=instance)
