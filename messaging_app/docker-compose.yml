@@ -1,0 +1,10 @@
+version: "1"
+services:
+  web:
+    build:./messaging-app
+  db:
+    image: mysql
+    environment:
+      - MYSQL_USER=user
+      - MYSQL_DB=db
+      - MYSQL_PASSWORD=password
