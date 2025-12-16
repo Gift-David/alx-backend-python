@@ -1,7 +1,7 @@
 version: "1"
 services:
   web:
-    build:./messaging-app
+    build: python3 manage.py runserver
   db:
     image: mysql
     environment:
