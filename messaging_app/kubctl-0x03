@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# kubctl-0x03: Rolling Update and Continuity Test
+
+DEPLOYMENT_NAME="django-blue"
+SERVICE_URL="http://messaging.local" # Ensure this is in your /etc/hosts
+
+echo "Triggering Rolling Update to version 2.0..."
+kubectl apply -f blue_deployment.yaml
+
+# Start a background process to test for downtime
+echo "📡 Testing for downtime in background..."
+(
+  SUCCESS=0
+  FAILURE=0
+  for i in {1..30}; do
+    STATUS=$(curl -o /dev/null -s -w "%{http_code}" $SERVICE_URL)
+    if [ "$STATUS" -eq 200 ]; then
+      ((SUCCESS++))
+    else
+      ((FAILURE++))
+    fi
+    sleep 0.5
+  done
+  echo -e "\nConnectivity Results: $SUCCESS Successes, $FAILURE Failures."
+) &
+
+# Monitor the rollout status
+echo "⏳ Monitoring rollout status..."
+kubectl rollout status deployment/$DEPLOYMENT_NAME
+
+# Wait for the background curl loop to finish
+wait
+
+echo "--------------------------------------------"
+echo "Verifying final pod states:"
+kubectl get pods -l version=blue
+echo "--------------------------------------------"
+
+# Check the history of the rollout
+echo "Rollout History:"
+kubectl rollout history deployment/$DEPLOYMENT_NAME
+
+echo "Rolling Update Complete."
