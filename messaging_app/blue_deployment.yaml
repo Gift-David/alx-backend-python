@@ -3,11 +3,16 @@ kind: Deployment
 metadata:
   name: django-blue
 spec:
-  replicas: 2
+  replicas: 4 # Increased for better visibility of the roll-out
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1       # Create 1 extra pod above the replica count during update
+      maxUnavailable: 0 # Ensure all 4 pods are always available during update
   selector:
     matchLabels:
       app: messaging
-      version: blue # Specific label for blue
+      version: blue
   template:
     metadata:
       labels:
@@ -16,6 +21,6 @@ spec:
     spec:
       containers:
       - name: django
-        image: your-docker-username/django-messaging-app:v1.0
+        image: your-docker-username/django-messaging-app:2.0
         ports:
         - containerPort: 8000
