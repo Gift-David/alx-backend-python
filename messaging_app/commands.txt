@@ -1,0 +1,11 @@
+# 1. Enable the Ingress Controller (Minikube specific)
+minikube addons enable ingress
+
+# 2. Apply the Ingress configuration
+kubectl apply -f ingress.yaml
+
+# 3. Verify the Ingress is created and has an IP assigned
+kubectl get ingress django-ingress
+
+# 4. (Optional) Map the IP to your local hosts file
+# echo "$(minikube ip) messaging.local" | sudo tee -a /etc/hosts
