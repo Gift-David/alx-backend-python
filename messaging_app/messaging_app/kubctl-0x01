@@ -5,7 +5,7 @@
 echo "Scaling deployment 'django-messaging-app' to 3 replicas..."
 kubectl scale deployment/django-messaging-app --replicas=3
 
-echo "⏳ Waiting for pods to initialize..."
+echo "Waiting for pods to initialize..."
 sleep 5
 
 echo "--------------------------------------------"
@@ -17,7 +17,7 @@ echo "--------------------------------------------"
 # Note: Since the service is ClusterIP, we use minikube to tunnel or port-forward 
 # to make it accessible to 'wrk' running on your host machine.
 
-echo "⚡ Starting Load Test with 'wrk'..."
+echo "Starting Load Test with 'wrk'..."
 echo "Note: Running port-forward in background to access ClusterIP..."
 
 # Start port-forwarding in the background (8080 -> 80)
