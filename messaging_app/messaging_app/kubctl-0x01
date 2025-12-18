@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# kubctl-0x01: Scaling, Load Testing, and Monitoring script
+
+echo "Scaling deployment 'django-messaging-app' to 3 replicas..."
+kubectl scale deployment/django-messaging-app --replicas=3
+
+echo "⏳ Waiting for pods to initialize..."
+sleep 5
+
+echo "--------------------------------------------"
+echo "Verifying Pod Status:"
+kubectl get pods -l app=messaging
+echo "--------------------------------------------"
+
+# Load Testing Section
+# Note: Since the service is ClusterIP, we use minikube to tunnel or port-forward 
+# to make it accessible to 'wrk' running on your host machine.
+
+echo "⚡ Starting Load Test with 'wrk'..."
+echo "Note: Running port-forward in background to access ClusterIP..."
+
+# Start port-forwarding in the background (8080 -> 80)
+kubectl port-forward service/django-service 8080:80 > /dev/null 2>&1 &
+PF_PID=$!
+
+# Give port-forwarding a moment to establish
+sleep 3
+
+# Run wrk: 2 threads, 100 connections, for 10 seconds
+wrk -t2 -c100 -d10s http://127.0.0.1:8080/
+
+# Kill the background port-forwarding process
+kill $PF_PID
+
+echo "--------------------------------------------"
+
+# Resource Monitoring
+# Note: Requires Metrics Server to be enabled in the cluster
+echo "Monitoring Resource Usage (kubectl top):"
+
+if kubectl top pods > /dev/null 2>&1; then
+    kubectl top pods -l app=messaging
+else
+    echo "Metrics Server not detected."
+    echo "Run 'minikube addons enable metrics-server' to enable this feature."
+fi
+
+echo "--------------------------------------------"
+echo "Script execution complete."
