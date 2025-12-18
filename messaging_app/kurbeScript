@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# kurbeScript: A script to manage local Kubernetes lifecycle
+
+echo "--------------------------------------------"
+echo "Initializing kurbeScript..."
+echo "--------------------------------------------"
+
+# 1. Start the Kubernetes cluster (using minikube)
+# We check if minikube is already running to avoid errors
+if minikube status | grep -q "Running"; then
+    echo "Cluster is already running."
+else
+    echo "Starting Kubernetes cluster..."
+    minikube start
+fi
+
+echo ""
+
+# 2. Verify that the cluster is running
+echo "Verifying cluster status..."
+kubectl cluster-info
+
+if [ $? -eq 0 ]; then
+    echo "Cluster is healthy and reachable."
+else
+    echo "Error: Cluster verification failed."
+    exit 1
+fi
+
+echo ""
+
+# Retrieve available pods
+echo "Retrieving pods in the 'default' namespace..."
+kubectl get pods
+
+echo "--------------------------------------------"
+echo "Script execution complete."
