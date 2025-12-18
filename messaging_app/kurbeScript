@@ -17,7 +17,7 @@ fi
 
 echo ""
 
-# 2. Verify that the cluster is running
+# Verify that the cluster is running
 echo "Verifying cluster status..."
 kubectl cluster-info
 
